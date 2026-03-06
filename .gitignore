@@ -1,0 +1,20 @@
+# Generated audio files
+*.wav
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Test outputs
+test_*.wav
+*_test.wav
