@@ -37,8 +37,8 @@ def process_image_data(pixels):
         audio_buffer.append(encode_pixel_to_sound(p))
     return np.concatenate(audio_buffer)
 
-# Example: Encoding a 3-pixel 'Image' (Black, Gray, White)
-example_data = [0, 127, 255]
+# Example: Encoding a more comprehensive test 'Image' 
+example_data = [0, 32, 64, 96, 128, 160, 192, 224, 255]
 encoded_audio = process_image_data(example_data)
 
 # Save to a minimal WAV file

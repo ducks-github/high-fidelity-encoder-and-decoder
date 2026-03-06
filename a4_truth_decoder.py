@@ -21,20 +21,26 @@ def decode_sound_to_pixel(audio_segment, sample_rate):
     Recovers the pixel value by calculating the frequency 
     of the segment and mapping it back to the A4 corridor.
     """
-    # 1. Count Zero Crossings (Near-zero compute)
-    # Finding where the sign changes from positive to negative
-    zero_crossings = np.where(np.diff(np.sign(audio_segment)))[0]
-    num_crossings = len(zero_crossings)
+    # Use FFT for more accurate frequency detection
+    fft = np.fft.fft(audio_segment)
+    freqs = np.fft.fftfreq(len(audio_segment), 1/sample_rate)
     
-    # 2. Convert Crossings to Frequency
-    # Duration = len(segment) / sample_rate
-    # Frequency = (crossings / 2) / duration
-    duration = len(audio_segment) / sample_rate
-    detected_freq = (num_crossings / 2.0) / duration
+    # Find the peak frequency (ignore negative frequencies)
+    positive_freqs = freqs[:len(freqs)//2]
+    positive_fft = np.abs(fft[:len(fft)//2])
+    
+    # Find the frequency with maximum amplitude
+    peak_idx = np.argmax(positive_fft)
+    detected_freq = positive_freqs[peak_idx]
+    
+    # Debug output
+    print(f"Segment length: {len(audio_segment)}, Detected freq: {detected_freq:.2f} Hz")
     
     # 3. Map Frequency back to 0-255 using your constants
     # Inverse of: freq = FLOOR + (pixel * DELTA)
     raw_pixel = (detected_freq - FLOOR) / DELTA
+    
+    print(f"Raw pixel: {raw_pixel:.2f}, Clamped pixel: {int(np.clip(round(raw_pixel), 0, 255))}")
     
     # Clamp the result to 0-255 to maintain data integrity
     return int(np.clip(round(raw_pixel), 0, 255))
